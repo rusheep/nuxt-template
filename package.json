@@ -1,0 +1,44 @@
+{
+  "name": "modern-admin-template",
+  "private": true,
+  "description": "Modern Admin Template based on Nuxt3 + PrimeVue",
+  "author": "Admin Template Team",
+  "scripts": {
+    "dev": "pnpm --filter admin dev",
+    "build": "pnpm --filter admin build",
+    "preview": "pnpm --filter admin preview",
+    "test": "pnpm --recursive run test",
+    "test:e2e": "pnpm --filter admin test:e2e",
+    "lint": "pnpm --recursive run lint",
+    "lint:fix": "pnpm --recursive run lint:fix",
+    "type-check": "pnpm --recursive run type-check",
+    "clean": "pnpm --recursive run clean",
+    "prepare": "husky install"
+  },
+  "packageManager": "pnpm@8.15.0",
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "devDependencies": {
+    "@nuxt/eslint-config": "^0.2.0",
+    "@typescript-eslint/eslint-plugin": "^6.19.0",
+    "@typescript-eslint/parser": "^6.19.0",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.1.3",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.2.0",
+    "prettier": "^3.2.4",
+    "typescript": "^5.3.3"
+  },
+  "pnpm": {
+    "overrides": {
+      "vue": "^3.4.0"
+    }
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
+}

@@ -60,6 +60,12 @@
         rounded
         @click="logout"
       />
+
+        <!-- Current Date Time -->
+      <div class="datetime-display text-white text-sm font-medium">
+        <div class="text-xs opacity-80">{{ currentDate }}</div>
+        <div>{{ currentTime }}</div>
+      </div>
     </div>
   </header>
 </template>
@@ -75,6 +81,41 @@ const userMenu = ref()
 const user = ref({
   name: 'Admin User',
   email: 'admin@example.com'
+})
+
+// DateTime functionality
+const currentDate = ref('')
+const currentTime = ref('')
+let timeInterval: NodeJS.Timeout | null = null
+
+const updateDateTime = () => {
+  const now = new Date()
+  
+  // Format date as YYYY/MM/DD
+  currentDate.value = now.toLocaleDateString('zh-TW', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  }).replace(/\//g, '/')
+  
+  // Format time as HH:MM:SS
+  currentTime.value = now.toLocaleTimeString('zh-TW', {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false
+  })
+}
+
+onMounted(() => {
+  updateDateTime() // Initial update
+  timeInterval = setInterval(updateDateTime, 1000) // Update every second
+})
+
+onUnmounted(() => {
+  if (timeInterval) {
+    clearInterval(timeInterval)
+  }
 })
 
 const userMenuItems = ref<MenuItem[]>([
@@ -150,6 +191,11 @@ function logout() {
 
 .user-avatar {
   border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.datetime-display {
+  text-align: right;
+  min-width: 100px;
 }
 
 /* 響應式設計 */

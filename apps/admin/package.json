@@ -18,14 +18,15 @@
   },
   "dependencies": {
     "@nuxt/image": "^1.8.1",
+    "@nuxtjs/i18n": "^10.0.4",
+    "@nuxtjs/tailwindcss": "^6.12.1",
     "@pinia/nuxt": "^0.5.5",
     "@primevue/nuxt-module": "^4.3.7",
     "@vueuse/nuxt": "^11.1.0",
-    "@nuxtjs/tailwindcss": "^6.12.1",
     "nuxt": "^3.13.2",
     "pinia": "^2.2.4",
-    "primevue": "^4.3.7",
     "primeicons": "^7.0.0",
+    "primevue": "^4.3.7",
     "vue": "^3.4.0",
     "vue-router": "^4.4.5"
   },

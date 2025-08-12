@@ -11,7 +11,8 @@ export default defineNuxtConfig({
   // CSS configuration
   css: [
     'primeicons/primeicons.css',
-    '~/assets/css/main.scss'
+    '~/assets/css/main.scss',
+    '~/assets/css/primevue-overrides.scss'
   ],
 
   // Modules
@@ -21,7 +22,8 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     '@primevue/nuxt-module',
     '@vueuse/nuxt',
-    '@nuxtjs/tailwindcss'
+    '@nuxtjs/tailwindcss',
+    '@nuxtjs/i18n'
   ],
 
   // PrimeVue configuration
@@ -32,9 +34,12 @@ export default defineNuxtConfig({
         options: {
           prefix: 'p',
           darkModeSelector: '.p-dark',
-          cssLayer: false
+          cssLayer: true
         }
       }
+    },
+    components: {
+      include: ['Menu', 'Button', 'Avatar', 'Card', 'InputText', 'Dropdown', 'Textarea', 'InputSwitch']
     }
   },
 
@@ -42,6 +47,23 @@ export default defineNuxtConfig({
   tailwindcss: {
     cssPath: '~/assets/css/tailwind.css',
     configPath: 'tailwind.config.js'
+  },
+
+  // i18n configuration
+  i18n: {
+    defaultLocale: 'en',
+    locales: [
+      { code: 'en', name: 'English' },
+      { code: 'zh-CN', name: '简体中文' },
+      { code: 'zh-TW', name: '繁體中文' }
+    ],
+    strategy: 'prefix_except_default',
+    detectBrowserLanguage: {
+      useCookie: true,
+      cookieKey: 'i18n_redirected',
+      redirectOn: 'root'
+    },
+    vueI18n: './i18n.config.ts'
   },
 
   // Runtime configuration

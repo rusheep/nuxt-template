@@ -1,5 +1,4 @@
 // Global SCSS styles
-@import 'tailwind.css';
 
 // PrimeVue Aura theme customization - Light mode
 :root {
@@ -57,7 +56,6 @@
   --surface-overlay: #ffffff;
   --surface-border: #e2e8f0;
   --surface-hover: #f1f5f9;
-  --text-color: #334155;
   --text-color-secondary: #64748b;
 }
 
@@ -71,7 +69,6 @@
   --surface-overlay: #475569;
   --surface-border: #64748b;
   --surface-hover: #475569;
-  --text-color: #f1f5f9;
   --text-color-secondary: #cbd5e1;
 }
 
@@ -142,11 +139,6 @@ h5 {
   background: var(--surface-card);
   border-right: 1px solid var(--surface-border);
   flex-shrink: 0;
-  
-  .p-menu {
-    border: none;
-    background: transparent;
-  }
 }
 
 .admin-main {

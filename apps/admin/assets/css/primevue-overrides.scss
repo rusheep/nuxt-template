@@ -1,0 +1,115 @@
+// 統一管理所有 PrimeVue 組件
+
+.admin-sidebar {
+  .p-panelmenu {
+    border: none !important;
+    
+    .p-panelmenu-panel {
+      border: none !important;
+      border-width: 0 !important;
+    }
+    
+    .p-panelmenu-header {
+      border: none !important;
+      border-width: 0 !important;
+    }
+    
+    .p-panelmenu-content {
+      border: none !important;
+      border-width: 0 !important;
+    }
+    
+    .p-menuitem {
+      border: none !important;
+      border-width: 0 !important;
+    }
+    
+    .p-menuitem-link {
+      border: none !important;
+      border-width: 0 !important;
+    }
+    
+    .p-submenu-list {
+      border: none !important;
+      border-width: 0 !important;
+    }
+    
+    .p-panelmenu-root {
+      border: none !important;
+      border-width: 0 !important;
+    }
+  }
+}
+
+// 其他 PrimeVue 組件的邊框移除（可擴展）
+.p-button {
+  &.p-button-text {
+    border: none !important;
+  }
+}
+
+// Menu 組件預設樣式 - 強制覆蓋
+.p-menu {
+  background-color: white !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 6px !important;
+  padding: 4px 0 !important;
+  min-width: 12rem !important;
+  
+  .p-menuitem {
+    border: none !important;
+  }
+  
+  .p-menuitem-link {
+    border: none !important;
+    padding: 8px 12px !important;
+    color: #374151 !important;
+    transition: background-color 0.2s !important;
+    
+    &:hover {
+      background-color: #f3f4f6 !important;
+    }
+    
+    .p-menuitem-icon {
+      color: #6b7280 !important;
+      margin-right: 8px !important;
+    }
+    
+    .p-menuitem-text {
+      font-weight: 500 !important;
+    }
+  }
+  
+  .p-menuitem-separator {
+    border-top: 1px solid #e5e7eb !important;
+    margin: 4px 0 !important;
+  }
+}
+
+.p-dropdown {
+  .p-dropdown-trigger {
+    border: none !important;
+  }
+}
+
+.p-inputtext {
+  &:focus {
+    border-color: var(--primary-color) !important;
+  }
+}
+
+// 通用邊框移除類
+.no-border {
+  border: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+}
+
+.no-border-all {
+  * {
+    border: none !important;
+    border-width: 0 !important;
+    border-style: none !important;
+  }
+}

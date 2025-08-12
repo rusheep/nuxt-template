@@ -3,17 +3,11 @@
     <div class="sidebar-header">
       <div class="flex items-center justify-between p-4">
         <div class="flex items-center gap-3">
-          <Avatar 
-            icon="pi pi-shield" 
-            class="bg-blue-600" 
-            size="large"
-            shape="circle"
-          />
-          <Transition name="fade">
-            <div v-show="!appStore.sidebarCollapsed" class="text-xl font-bold text-white">
-              系統管理
+          <div class="header-text" :class="{ 'collapsed': appStore.sidebarCollapsed }">
+            <div class="text-xl font-bold whitespace-nowrap">
+              EMS智慧能源管理平台
             </div>
-          </Transition>
+          </div>
         </div>
         <Button
           :icon="appStore.sidebarCollapsed ? 'pi pi-angle-right' : 'pi pi-angle-left'"
@@ -28,38 +22,41 @@
         :model="systemMenuItems" 
         class="w-full system-menu"
         :pt="{
-          root: { class: 'border-0' },
-          panel: { class: 'border-0' },
-          header: { class: 'border-0 text-white hover:bg-blue-700 rounded-md' },
-          headerContent: { class: 'text-white' },
-          headerIcon: { class: 'text-white' },
-          headerLabel: { class: 'text-white font-medium' },
-          content: { class: 'border-0' },
-          submenu: { class: 'border-0' },
-          menuitem: { class: 'border-0' },
-          action: { class: 'text-white hover:bg-blue-600 rounded-md' },
-          icon: { class: 'text-white' },
-          label: { class: 'text-white' }
+          header: { 
+            class: 'hover:bg-blue-700 rounded-md',
+            style: { border: 'none', borderWidth: '0' }
+          },
+
+          headerLabel: { class: 'font-medium' },
+          action: { class: 'hover:bg-blue-600 rounded-md' },
         }"
       >
         <template #item="{ item }">
           <NuxtLink
             v-if="item.route"
             :to="item.route"
-            class="flex items-center px-4 py-2 cursor-pointer text-white hover:bg-blue-600 rounded-md transition-colors"
-            :class="{ 'bg-blue-600': isActiveRoute(item.route) }"
+            class="menu-item"
+            :class="{ 'active': isActiveRoute(item.route) }"
           >
-            <i :class="item.icon" class="text-white mr-3"></i>
-            <span class="flex-1">{{ item.label }}</span>
-            <i v-if="item.items" class="pi pi-angle-down text-white ml-auto"></i>
+            <i :class="[item.icon, 'menu-icon', appStore.sidebarCollapsed ? 'mx-auto' : 'mr-3']"></i>
+            <div class="menu-text" :class="{ 'collapsed': appStore.sidebarCollapsed }">
+              <span class="whitespace-nowrap">{{ item.label }}</span>
+            </div>
+            <div class="menu-arrow" :class="{ 'collapsed': appStore.sidebarCollapsed }">
+              <i v-if="item.items" class="pi pi-angle-down"></i>
+            </div>
           </NuxtLink>
           <a
             v-else
-            class="flex items-center px-4 py-2 cursor-pointer text-white hover:bg-blue-600 rounded-md transition-colors"
+            class="menu-item"
           >
-            <i :class="item.icon" class="text-white mr-3"></i>
-            <span class="flex-1">{{ item.label }}</span>
-            <i v-if="item.items" class="pi pi-angle-down text-white ml-auto"></i>
+            <i :class="[item.icon, 'menu-icon', appStore.sidebarCollapsed ? 'mx-auto' : 'mr-3']"></i>
+            <div class="menu-text" :class="{ 'collapsed': appStore.sidebarCollapsed }">
+              <span class="whitespace-nowrap">{{ item.label }}</span>
+            </div>
+            <div class="menu-arrow" :class="{ 'collapsed': appStore.sidebarCollapsed }">
+              <i v-if="item.items" class="pi pi-angle-down"></i>
+            </div>
           </a>
         </template>
       </PanelMenu>
@@ -73,8 +70,6 @@ import type { MenuItem } from 'primevue/menuitem'
 const route = useRoute()
 const appStore = useAppStore()
 
-
-
 // 系統選單項目
 const systemMenuItems: MenuItem[] = [
   {
@@ -86,14 +81,12 @@ const systemMenuItems: MenuItem[] = [
       {
         key: 'air-detect',
         label: '空氣檢測',
-        icon: 'pi pi-sensor',
         route: '/air-detect',
         class: 'active-item'
       },
       {
         key: 'ltcg',
         label: 'LTCG',
-        icon: 'pi pi-chart-line',
         route: '/ltcg'
       }
     ]
@@ -106,13 +99,11 @@ const systemMenuItems: MenuItem[] = [
       {
         key: 'lighting-control',
         label: '照明控制',
-        icon: 'pi pi-sliders-h',
         route: '/lighting/control'
       },
       {
         key: 'lighting-monitor',
         label: '照明監控',
-        icon: 'pi pi-eye',
         route: '/lighting/monitor'
       }
     ]
@@ -125,13 +116,11 @@ const systemMenuItems: MenuItem[] = [
       {
         key: 'auxiliary-devices',
         label: '設備管理',
-        icon: 'pi pi-cog',
         route: '/auxiliary/devices'
       },
       {
         key: 'auxiliary-maintenance',
         label: '維護記錄',
-        icon: 'pi pi-file-edit',
         route: '/auxiliary/maintenance'
       }
     ]
@@ -139,18 +128,16 @@ const systemMenuItems: MenuItem[] = [
   {
     key: 'ac',
     label: '空調系統',
-    icon: 'pi pi-snowflake',
+    icon: 'pi pi-objects-column',
     items: [
       {
         key: 'ac-temperature',
         label: '溫度控制',
-        icon: 'pi pi-thermometer',
         route: '/ac/temperature'
       },
       {
         key: 'ac-humidity',
         label: '濕度監控',
-        icon: 'pi pi-percentage',
         route: '/ac/humidity'
       }
     ]
@@ -163,13 +150,11 @@ const systemMenuItems: MenuItem[] = [
       {
         key: 'electricity-monitor',
         label: '電力監控',
-        icon: 'pi pi-chart-bar',
         route: '/electricity/monitor'
       },
       {
         key: 'electricity-load',
         label: '負載管理',
-        icon: 'pi pi-chart-pie',
         route: '/electricity/load'
       }
     ]
@@ -179,60 +164,60 @@ const systemMenuItems: MenuItem[] = [
 const isActiveRoute = (routePath: string) => {
   return route.path === routePath || route.path.startsWith(routePath + '/')
 }
-
-
 </script>
 
 <style scoped>
+/* 基礎樣式 */
 .admin-sidebar {
-  @apply fixed left-0 top-0 h-full bg-gray-800 text-white transition-all duration-300 z-50;
-  width: 280px;
+  width: 17.5rem;
+  height: 100%;
+  background-color: var(--primary-color);
+  transition: all 0.3s ease;
   box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+  color: var(--primary-color-text);
 }
 
 .admin-sidebar.collapsed {
-  width: 70px;
+  width: 5rem;
 }
 
-
-.toggle-btn {
-  @apply text-white hover:bg-gray-700;
+/* Header 樣式 */
+.header-text {
+  overflow: hidden;
 }
 
-.sidebar-menu {
-  @apply flex-1 overflow-y-auto;
-  max-height: calc(100vh - 200px);
-}
-
-
-
-
-
-/* 過渡動畫 */
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
+.header-text.collapsed {
+  width: 0;
   opacity: 0;
 }
 
-/* 滾動條樣式 */
-.sidebar-menu::-webkit-scrollbar {
-  width: 4px;
+.admin-sidebar.collapsed .sidebar-header .flex.items-center.gap-3 {
+  justify-content: center;
 }
 
-.sidebar-menu::-webkit-scrollbar-track {
-  @apply bg-gray-700;
+
+.toggle-btn:hover {
+  background-color: rgb(55 65 81);
 }
 
-.sidebar-menu::-webkit-scrollbar-thumb {
-  @apply bg-gray-600 rounded;
+/* 選單樣式 */
+.menu-item {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  border-radius: 0.375rem;
+  transition: all 0.3s ease;
 }
 
-.sidebar-menu::-webkit-scrollbar-thumb:hover {
-  @apply bg-gray-500;
+.menu-text {
+  flex: 1;
+  overflow: hidden;
 }
+
+.menu-text.collapsed {
+  width: 0;
+  opacity: 0;
+}
+
 </style>

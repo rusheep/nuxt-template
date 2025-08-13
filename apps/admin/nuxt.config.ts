@@ -1,6 +1,22 @@
+import Aura from '@primevue/themes/aura'
+
 export default defineNuxtConfig({
+  // Compatibility date for Nitro
+  compatibilityDate: '2025-08-13',
+  
   // Development configuration
   devtools: { enabled: true },
+  
+  // Development server configuration
+  devServer: {
+    port: 3000,
+    host: 'localhost'
+  },
+  
+  // Nitro server configuration
+  nitro: {
+    // Server configuration can be set via environment variables
+  },
   
   // TypeScript configuration
   typescript: {
@@ -17,10 +33,10 @@ export default defineNuxtConfig({
 
   // Modules
   modules: [
+    '@primevue/nuxt-module',
     '@nuxt/devtools',
     '@nuxt/image',
     '@pinia/nuxt',
-    '@primevue/nuxt-module',
     '@vueuse/nuxt',
     '@nuxtjs/tailwindcss',
     '@nuxtjs/i18n'
@@ -30,16 +46,8 @@ export default defineNuxtConfig({
   primevue: {
     options: {
       theme: {
-        preset: 'Aura',
-        options: {
-          prefix: 'p',
-          darkModeSelector: '.p-dark',
-          cssLayer: true
-        }
+        preset: Aura
       }
-    },
-    components: {
-      include: ['Menu', 'Button', 'Avatar', 'Card', 'InputText', 'Dropdown', 'Textarea', 'InputSwitch']
     }
   },
 
@@ -69,10 +77,13 @@ export default defineNuxtConfig({
   // Runtime configuration
   runtimeConfig: {
     // Private keys (only available on server-side)
-    apiSecret: process.env.API_SECRET || 'default-secret-key',
-    // Public keys (exposed to client-side)
+    apiSecret: 'default-secret-key',
+    // Public keys (exposed to client-side) - 會自動從環境變數覆蓋
     public: {
-      apiBase: process.env.API_BASE_URL || '/api'
+      apiBase: 'http://localhost:8000/api', // 會被 NUXT_PUBLIC_API_BASE 覆蓋
+      fileApiBase: '', // 會被 NUXT_PUBLIC_FILE_API_BASE 覆蓋
+      mqttBase: '', // 會被 NUXT_PUBLIC_MQTT_BASE 覆蓋
+      forgeBase: '' // 會被 NUXT_PUBLIC_FORGE_BASE 覆蓋
     }
   },
 

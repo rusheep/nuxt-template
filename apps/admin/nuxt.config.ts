@@ -9,14 +9,12 @@ export default defineNuxtConfig({
   
   // Development server configuration
   devServer: {
-    port: 3000,
+    port: 3003,
     host: 'localhost'
   },
   
-  // Nitro server configuration
-  nitro: {
-    // Server configuration can be set via environment variables
-  },
+  // Nitro server configuration  
+  nitro: {},
   
   // TypeScript configuration
   typescript: {
@@ -76,14 +74,12 @@ export default defineNuxtConfig({
 
   // Runtime configuration
   runtimeConfig: {
-    // Private keys (only available on server-side)
     apiSecret: 'default-secret-key',
-    // Public keys (exposed to client-side) - 會自動從環境變數覆蓋
     public: {
-      apiBase: 'http://localhost:8000/api', // 會被 NUXT_PUBLIC_API_BASE 覆蓋
-      fileApiBase: '', // 會被 NUXT_PUBLIC_FILE_API_BASE 覆蓋
-      mqttBase: '', // 會被 NUXT_PUBLIC_MQTT_BASE 覆蓋
-      forgeBase: '' // 會被 NUXT_PUBLIC_FORGE_BASE 覆蓋
+      apiBase: process.env.NUXT_PUBLIC_API_BASE || '/api',
+      fileApiBase: process.env.NUXT_PUBLIC_FILE_API_BASE || 'https://cgems.cvilux-group.com:8088',
+      mqttBase: process.env.NUXT_PUBLIC_MQTT_BASE || 'wss://mqttwss.mjm-staging.developers-homelab.net',
+      forgeBase: process.env.NUXT_PUBLIC_FORGE_BASE || 'https://cgems.cvilux-group.com:8088/dist'
     }
   },
 

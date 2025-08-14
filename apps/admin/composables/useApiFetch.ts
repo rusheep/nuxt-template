@@ -19,7 +19,6 @@ export const useApiFetch = () => {
 
   return $fetch.create({
     baseURL: config.public.apiBase,
-    credentials: 'include', // 支援 withCredentials
     
     onRequest({ request, options }) {
       // 全域請求攔截
@@ -33,8 +32,7 @@ export const useApiFetch = () => {
       if (isAuthEndpoint) {
         console.log('🔓 Auth endpoint detected, skipping credentials')
       } else {
-        // 需要認證的端點，設定 credentials 和 headers
-        options.credentials = 'include'
+        // 需要認證的端點，設定 headers
         
         // 自動添加認證 token (優先使用 Cookie 中的 token)
         const cookieToken = getAuthToken()

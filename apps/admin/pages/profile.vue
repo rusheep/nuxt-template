@@ -16,7 +16,7 @@
         <template #content>
           <div class="text-center space-y-4">
             <Avatar
-              image="/images/avatar-placeholder.jpg"
+              icon="pi pi-user"
               shape="circle"
               size="xlarge"
               class="mx-auto"

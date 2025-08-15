@@ -4,8 +4,11 @@
       <div class="flex items-center justify-between p-4">
         <div class="flex items-center gap-3">
           <div class="header-text" :class="{ 'collapsed': appStore.sidebarCollapsed }">
-            <div class="text-xl font-bold whitespace-nowrap">
-              EMS智慧能源管理平台
+            <div class="text-lg font-bold whitespace-nowrap">
+              IBMS NetZero
+            </div>
+            <div class="text-sm opacity-80 whitespace-nowrap">
+              智慧建築管理系統
             </div>
           </div>
         </div>
@@ -70,94 +73,119 @@ import type { MenuItem } from 'primevue/menuitem'
 const route = useRoute()
 const appStore = useAppStore()
 
-// 系統選單項目
+// IBMS 系統選單項目
 const systemMenuItems: MenuItem[] = [
   {
-    key: 'air-detection',
-    label: '空氣檢測系統',
-    icon: 'pi pi-cloud',
+    key: 'dashboard',
+    label: '儀表板',
+    icon: 'pi pi-home',
+    route: '/dashboard'
+  },
+  {
+    key: 'system',
+    label: '系統監控',
+    icon: 'pi pi-desktop',
     expanded: true,
     items: [
       {
-        key: 'air-detect',
-        label: '空氣檢測',
-        route: '/air-detect',
-        class: 'active-item'
+        key: 'system-overview',
+        label: '系統總覽',
+        route: '/system'
       },
       {
-        key: 'ltcg',
-        label: 'LTCG',
-        route: '/ltcg'
+        key: 'system-air',
+        label: '空氣檢測系統',
+        route: '/system/air'
+      },
+      {
+        key: 'system-lighting',
+        label: '照明系統',
+        route: '/system/lighting'
+      },
+      {
+        key: 'system-ac',
+        label: '空調系統',
+        route: '/system/ac'
+      },
+      {
+        key: 'system-power',
+        label: '電力系統',
+        route: '/system/power'
       }
     ]
   },
   {
-    key: 'lighting',
-    label: '照明系統',
-    icon: 'pi pi-lightbulb',
+    key: 'data',
+    label: '數據管理',
+    icon: 'pi pi-chart-line',
     items: [
       {
-        key: 'lighting-control',
-        label: '照明控制',
-        route: '/lighting/control'
+        key: 'history',
+        label: '歷史數據',
+        route: '/history'
       },
       {
-        key: 'lighting-monitor',
-        label: '照明監控',
-        route: '/lighting/monitor'
+        key: 'energy',
+        label: '能源管理',
+        route: '/energy'
       }
     ]
   },
   {
-    key: 'auxiliary',
-    label: '輔助系統',
-    icon: 'pi pi-wrench',
+    key: 'operations',
+    label: '營運管理',
+    icon: 'pi pi-cog',
     items: [
       {
-        key: 'auxiliary-devices',
-        label: '設備管理',
-        route: '/auxiliary/devices'
+        key: 'operation',
+        label: '營運維護',
+        route: '/operation'
       },
       {
-        key: 'auxiliary-maintenance',
-        label: '維護記錄',
-        route: '/auxiliary/maintenance'
+        key: 'alert',
+        label: '警報管理',
+        route: '/alert'
       }
     ]
   },
   {
-    key: 'ac',
-    label: '空調系統',
-    icon: 'pi pi-objects-column',
+    key: 'assets',
+    label: '資產設定',
+    icon: 'pi pi-building',
     items: [
       {
-        key: 'ac-temperature',
-        label: '溫度控制',
-        route: '/ac/temperature'
+        key: 'asset',
+        label: '資產管理',
+        route: '/asset'
       },
       {
-        key: 'ac-humidity',
-        label: '濕度監控',
-        route: '/ac/humidity'
+        key: 'graph',
+        label: '圖表管理',
+        route: '/graph'
+      },
+      {
+        key: 'product',
+        label: '產品設定',
+        route: '/product'
+      },
+      {
+        key: 'setting',
+        label: '設定管理',
+        route: '/setting'
       }
     ]
   },
   {
-    key: 'electricity',
-    label: '電力系統',
-    icon: 'pi pi-bolt',
-    items: [
-      {
-        key: 'electricity-monitor',
-        label: '電力監控',
-        route: '/electricity/monitor'
-      },
-      {
-        key: 'electricity-load',
-        label: '負載管理',
-        route: '/electricity/load'
-      }
-    ]
+    key: 'headquarters',
+    label: '總部管理',
+    icon: 'pi pi-globe',
+    route: '/headquarters'
+  },
+  {
+    key: 'account',
+    label: '帳號管理',
+    icon: 'pi pi-users',
+    route: '/account'
   }
 ]
 

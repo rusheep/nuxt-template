@@ -4,39 +4,39 @@
       <template #header>
         <div class="text-center p-6 pb-0">
           <div class="w-16 h-16 bg-primary-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <i class="pi pi-user text-2xl text-white"></i>
+            <i class="pi pi-building text-2xl text-white"></i>
           </div>
-          <h1 class="text-2xl font-bold text-surface-900">Welcome Back</h1>
-          <p class="text-surface-600 mt-2">Sign in to your admin account</p>
+          <h1 class="text-2xl font-bold text-surface-900">IBMS NetZero</h1>
+          <p class="text-surface-600 mt-2">智慧建築管理系統登入</p>
         </div>
       </template>
       
       <template #content>
         <form @submit.prevent="handleLogin" class="space-y-6">
           <div class="field">
-            <label for="email" class="block text-sm font-medium text-surface-700 mb-2">
-              Email Address
+            <label for="account" class="block text-sm font-medium text-surface-700 mb-2">
+              帳號
             </label>
             <InputText
-              id="email"
-              v-model="form.email"
-              type="email"
-              placeholder="Enter your email"
+              id="account"
+              v-model="form.account"
+              type="text"
+              placeholder="請輸入帳號"
               class="w-full"
-              :class="{ 'p-invalid': errors.email }"
+              :class="{ 'p-invalid': errors.account }"
               required
             />
-            <small v-if="errors.email" class="p-error">{{ errors.email }}</small>
+            <small v-if="errors.account" class="p-error">{{ errors.account }}</small>
           </div>
           
           <div class="field">
             <label for="password" class="block text-sm font-medium text-surface-700 mb-2">
-              Password
+              密碼
             </label>
             <Password
               id="password"
               v-model="form.password"
-              placeholder="Enter your password"
+              placeholder="請輸入密碼"
               class="w-full"
               :class="{ 'p-invalid': errors.password }"
               :feedback="false"
@@ -54,7 +54,7 @@
                 :binary="true"
               />
               <label for="remember" class="ml-2 text-sm text-surface-700">
-                Remember me
+                記住我
               </label>
             </div>
             <a
@@ -62,13 +62,13 @@
               class="text-sm text-primary-600 hover:text-primary-500 transition-colors"
               @click.prevent="showForgotPassword"
             >
-              Forgot password?
+              忘記密碼？
             </a>
           </div>
           
           <Button
             type="submit"
-            label="Sign In"
+            label="登入"
             class="w-full p-3 text-lg"
             :loading="loading"
             :disabled="!isFormValid"
@@ -81,13 +81,13 @@
     <Card class="mt-6 w-full max-w-md mx-auto">
       <template #content>
         <div class="text-center">
-          <h3 class="text-lg font-semibold text-surface-900 mb-3">Demo Credentials</h3>
+          <h3 class="text-lg font-semibold text-surface-900 mb-3">測試帳號</h3>
           <div class="space-y-2 text-sm text-surface-600">
-            <p><strong>Email:</strong> admin@example.com</p>
-            <p><strong>Password:</strong> admin123</p>
+            <p><strong>帳號:</strong> webUser</p>
+            <p><strong>密碼:</strong> 123456</p>
           </div>
           <Button
-            label="Use Demo Credentials"
+            label="使用測試帳號"
             class="mt-4 p-button-outlined"
             @click="useDemoCredentials"
           />
@@ -106,13 +106,13 @@ definePageMeta({
 
 // Form state
 const form = ref({
-  email: '',
+  account: '',
   password: '',
   remember: false
 })
 
 const errors = ref({
-  email: '',
+  account: '',
   password: ''
 })
 
@@ -120,26 +120,22 @@ const loading = ref(false)
 
 // Computed
 const isFormValid = computed(() => {
-  return form.value.email && form.value.password && !errors.value.email && !errors.value.password
+  return form.value.account && form.value.password && !errors.value.account && !errors.value.password
 })
 
 // Methods
 const validateForm = () => {
-  errors.value = { email: '', password: '' }
+  errors.value = { account: '', password: '' }
   
-  if (!form.value.email) {
-    errors.value.email = 'Email is required'
-  } else if (!/\S+@\S+\.\S+/.test(form.value.email)) {
-    errors.value.email = 'Invalid email format'
+  if (!form.value.account) {
+    errors.value.account = '請輸入帳號'
   }
   
   if (!form.value.password) {
-    errors.value.password = 'Password is required'
-  } else if (form.value.password.length < 6) {
-    errors.value.password = 'Password must be at least 6 characters'
+    errors.value.password = '請輸入密碼'
   }
   
-  return !errors.value.email && !errors.value.password
+  return !errors.value.account && !errors.value.password
 }
 
 const handleLogin = async () => {
@@ -148,25 +144,32 @@ const handleLogin = async () => {
   loading.value = true
   
   try {
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500))
+    const api = useApi()
     
-    // For demo purposes, accept any valid email/password
-    if (form.value.email && form.value.password) {
-      // Store auth state (to be implemented with proper state management)
+    // Call IBMS login API
+    const response = await api.post('/LoginV2/', {
+      Account: form.value.account,
+      Password: form.value.password
+    })
+    
+    if (response?.code === "0000" && response?.data?.token) {
+      // Login successful - token is automatically stored by useApiFetch
+      console.log('登入成功:', response.data)
       await navigateTo('/dashboard')
+    } else {
+      errors.value.account = '登入失敗，請檢查帳號密碼'
     }
   } catch (error) {
     console.error('Login error:', error)
-    // Handle login error
+    errors.value.account = '登入失敗，請稍後再試'
   } finally {
     loading.value = false
   }
 }
 
 const useDemoCredentials = () => {
-  form.value.email = 'admin@example.com'
-  form.value.password = 'admin123'
+  form.value.account = 'webUser'
+  form.value.password = 'mjm90581598'
 }
 
 const showForgotPassword = () => {
@@ -176,9 +179,9 @@ const showForgotPassword = () => {
 
 // Watch for form changes to clear errors
 watch(
-  () => form.value.email,
+  () => form.value.account,
   () => {
-    if (errors.value.email) errors.value.email = ''
+    if (errors.value.account) errors.value.account = ''
   }
 )
 

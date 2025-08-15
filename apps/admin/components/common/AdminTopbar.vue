@@ -2,8 +2,14 @@
   <header class="admin-topbar flex items-center justify-between">
     <div class="flex items-center gap-4">
       <div class="text-lg font-semibold text-white">
-        嘉瑪科技
+        IBMS NetZero
       </div>
+      
+      <!-- Building Selector -->
+      <BuildingSelector 
+        v-model="selectedBuilding"
+        @change="onBuildingChange"
+      />
     </div>
     
     <div class="flex items-center gap-3">
@@ -32,7 +38,7 @@
       <div class="user-profile-container relative">
         <div class="flex items-center gap-2 cursor-pointer user-profile" @click="toggleUserMenu">
           <Avatar
-            image="/images/avatar-placeholder.jpg"
+            icon="pi pi-user"
             shape="circle"
             size="normal"
             class="user-avatar"
@@ -72,10 +78,14 @@
 
 <script setup lang="ts">
 import type { MenuItem } from 'primevue/menuitem'
+import BuildingSelector from './BuildingSelector.vue'
 
 const route = useRoute()
 const appStore = useAppStore()
 const userMenu = ref()
+
+// Building selection
+const selectedBuilding = ref('')
 
 // Get current user from store (to be implemented)
 const user = ref({
@@ -161,6 +171,11 @@ function logout() {
   // Implement logout logic
   console.log('Logout')
   navigateTo('/login')
+}
+
+const onBuildingChange = (building: any) => {
+  console.log('建築物變更:', building)
+  // 這裡可以觸發全域事件或更新 store
 }
 </script>
 

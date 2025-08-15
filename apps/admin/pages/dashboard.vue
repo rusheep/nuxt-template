@@ -3,10 +3,10 @@
     <!-- Page Header -->
     <div class="flex items-center justify-between">
       <div>
-        <h1 class="text-2xl font-bold text-surface-900">Dashboard</h1>
-        <p class="text-surface-600 mt-1">Welcome back! Here's what's happening.</p>
+        <h1 class="text-2xl font-bold text-surface-900">儀表板</h1>
+        <p class="text-surface-600 mt-1">建築物能源與系統總覽</p>
       </div>
-      <Button label="Refresh" icon="pi pi-refresh" @click="refreshData" />
+      <Button label="重新整理" icon="pi pi-refresh" @click="refreshData" />
     </div>
 
     <!-- Stats Cards -->
@@ -25,24 +25,24 @@
     <!-- Charts Section -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <Card>
-        <template #title>Monthly Revenue</template>
+        <template #title>能源使用趨勢</template>
         <template #content>
           <div class="h-80 flex items-center justify-center text-surface-500">
             <div class="text-center">
               <i class="pi pi-chart-line text-4xl mb-3"></i>
-              <p>Chart component will be rendered here</p>
+              <p>能源使用圖表將在此顯示</p>
             </div>
           </div>
         </template>
       </Card>
 
       <Card>
-        <template #title>User Activity</template>
+        <template #title>系統負載分佈</template>
         <template #content>
           <div class="h-80 flex items-center justify-center text-surface-500">
             <div class="text-center">
               <i class="pi pi-chart-bar text-4xl mb-3"></i>
-              <p>Chart component will be rendered here</p>
+              <p>系統負載圖表將在此顯示</p>
             </div>
           </div>
         </template>
@@ -51,17 +51,17 @@
 
     <!-- Recent Activity -->
     <Card>
-      <template #title>Recent Activity</template>
+      <template #title>系統活動記錄</template>
       <template #content>
         <DataTable :value="recentActivity" :rows="5" :loading="loading">
-          <Column field="action" header="Action" />
-          <Column field="user" header="User" />
-          <Column field="timestamp" header="Time">
+          <Column field="action" header="活動" />
+          <Column field="system" header="系統" />
+          <Column field="timestamp" header="時間">
             <template #body="{ data }">
               {{ formatDate(data.timestamp) }}
             </template>
           </Column>
-          <Column field="status" header="Status">
+          <Column field="status" header="狀態">
             <template #body="{ data }">
               <Badge
                 :value="data.status"
@@ -73,11 +73,6 @@
       </template>
     </Card>
 
-    <!-- 測試滾動的額外內容 -->
-    <div v-for="i in 20" :key="i" class="bg-white p-4 rounded-lg shadow mb-4">
-      <h3 class="text-lg font-semibold mb-2">測試內容 {{ i }}</h3>
-      <p class="text-gray-600">這是第 {{ i }} 個測試區塊，用來測試滾動功能是否正常工作。</p>
-    </div>
   </div>
 </template>
 
@@ -105,30 +100,30 @@ interface Stat {
 
 const stats = ref<Stat[]>([
   {
-    title: 'Total Users',
-    value: '12,345',
-    change: '+12%',
-    icon: 'pi pi-users',
+    title: '總用電量',
+    value: '1,234 kWh',
+    change: '+8%',
+    icon: 'pi pi-bolt',
     color: 'blue'
   },
   {
-    title: 'Revenue',
-    value: '$54,321',
-    change: '+8%',
-    icon: 'pi pi-dollar',
+    title: '碳排放量',
+    value: '567 kg',
+    change: '-12%',
+    icon: 'pi pi-globe',
     color: 'green'
   },
   {
-    title: 'Orders',
-    value: '1,234',
-    change: '-3%',
-    icon: 'pi pi-shopping-cart',
+    title: '系統異常',
+    value: '3',
+    change: '-2',
+    icon: 'pi pi-exclamation-triangle',
     color: 'orange'
   },
   {
-    title: 'Conversion',
-    value: '3.45%',
-    change: '+15%',
+    title: '能源效率',
+    value: '92.5%',
+    change: '+5%',
     icon: 'pi pi-chart-line',
     color: 'purple'
   }
@@ -136,34 +131,34 @@ const stats = ref<Stat[]>([
 
 const recentActivity = ref([
   {
-    action: 'User Registration',
-    user: 'john.doe@example.com',
+    action: '電力負載警報',
+    system: '5F 東側區域',
     timestamp: new Date(Date.now() - 1000 * 60 * 30),
-    status: 'Success'
+    status: '處理中'
   },
   {
-    action: 'Password Reset',
-    user: 'jane.smith@example.com',
+    action: '空調系統維護',
+    system: '3F 會議室',
     timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2),
-    status: 'Success'
+    status: '已完成'
   },
   {
-    action: 'Login Attempt',
-    user: 'suspicious@example.com',
+    action: '照明系統復原',
+    system: '1F 大廳',
     timestamp: new Date(Date.now() - 1000 * 60 * 60 * 4),
-    status: 'Failed'
+    status: '已完成'
   },
   {
-    action: 'Data Export',
-    user: 'admin@example.com',
+    action: '能源數據匯出',
+    system: '全棟建築',
     timestamp: new Date(Date.now() - 1000 * 60 * 60 * 6),
-    status: 'Processing'
+    status: '處理中'
   },
   {
-    action: 'System Backup',
-    user: 'system',
+    action: '系統自動備份',
+    system: '系統',
     timestamp: new Date(Date.now() - 1000 * 60 * 60 * 8),
-    status: 'Success'
+    status: '已完成'
   }
 ])
 
@@ -186,9 +181,9 @@ const formatDate = (date: Date) => {
 
 const getStatusSeverity = (status: string) => {
   const severityMap: Record<string, string> = {
-    'Success': 'success',
-    'Failed': 'danger',
-    'Processing': 'warning'
+    '已完成': 'success',
+    '失敗': 'danger',
+    '處理中': 'warning'
   }
   return severityMap[status] || 'info'
 }

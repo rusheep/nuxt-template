@@ -1,15 +1,15 @@
 // 權限頁面配置
 export const AUTH_PAGES = [
-  { authCode: 'PF0', icon: 'pi-home', resource: 'dashboard', route: '/dashboard' },
-  { authCode: 'PF1', icon: 'pi-desktop', resource: 'monitoring', route: '/monitoring' },
-  { authCode: 'PF2', icon: 'pi-chart-line', resource: 'energy', route: '/energy' },
-  { authCode: 'PF3', icon: 'pi-database', resource: 'history', route: '/history-data' },
-  { authCode: 'PF4', icon: 'pi-bell', resource: 'alert', route: '/alert' },
-  { authCode: 'PF5', icon: 'pi-wrench', resource: 'maintenance', route: '/maintenance' },
-  { authCode: 'PF6', icon: 'pi-chart-bar', resource: 'graph', route: '/graph' },
-  { authCode: 'PF7', icon: 'pi-cog', resource: 'devices', route: '/devices' },
-  { authCode: 'PF8', icon: 'pi-users', resource: 'account', route: '/account' },
-  { authCode: 'PF9', icon: 'pi-cog', resource: 'setting', route: '/setting' }
+  { authCode: 'PF0', icon: 'pi pi-home', resource: 'dashboard', route: '/dashboard' },
+  { authCode: 'PF1', icon: 'pi pi-desktop', resource: 'monitoring', route: '/monitoring' },
+  { authCode: 'PF2', icon: 'pi pi-chart-line', resource: 'energy', route: '/energy' },
+  { authCode: 'PF3', icon: 'pi pi-database', resource: 'history', route: '/history-data' },
+  { authCode: 'PF4', icon: 'pi pi-bell', resource: 'alert', route: '/alert' },
+  { authCode: 'PF5', icon: 'pi pi-wrench', resource: 'maintenance', route: '/maintenance' },
+  { authCode: 'PF6', icon: 'pi pi-chart-bar', resource: 'graph', route: '/graph' },
+  { authCode: 'PF7', icon: 'pi pi-cog', resource: 'devices', route: '/devices' },
+  { authCode: 'PF8', icon: 'pi pi-users', resource: 'account', route: '/account' },
+  { authCode: 'PF9', icon: 'pi pi-cog', resource: 'setting', route: '/setting' }
 ]
 
 // API 端點

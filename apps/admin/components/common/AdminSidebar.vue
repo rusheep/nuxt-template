@@ -2,17 +2,20 @@
   <aside class="admin-sidebar" :class="{ 'collapsed': appStore.sidebarCollapsed }">
     <!-- Header -->
     <div class="sidebar-header">
-      <div class="flex items-center justify-between p-4">
+      <div 
+        class="flex items-center justify-between p-4"
+        :class="appStore.sidebarCollapsed ? 'justify-center' : 'justify-between'"
+      >
         <div class="flex items-center gap-3">
           <div class="header-text" :class="{ 'collapsed': appStore.sidebarCollapsed }">
             <div class="text-lg font-bold whitespace-nowrap">IBMS NetZero</div>
             <div class="text-sm opacity-80 whitespace-nowrap">智慧建築管理系統</div>
           </div>
         </div>
-        <Button
-          :icon="appStore.sidebarCollapsed ? 'pi pi-angle-right' : 'pi pi-angle-left'"
-          class="p-button-text p-button-rounded p-button-sm toggle-btn"
-          @click="appStore.toggleSidebar()"
+        <i 
+          :class="appStore.sidebarCollapsed ? 'pi pi-bars' : 'pi pi-angle-left'"
+          class="text-primary-color-text cursor-pointer toggle-btn text-xl"
+          @click="handleSidebarToggle"
         />
       </div>
     </div>
@@ -25,6 +28,8 @@
       
       <PanelMenu 
         v-else
+        ref="panelMenuRef"
+        :key="`panel-menu-${appStore.sidebarCollapsed}`"
         :model="systemMenuItems" 
         class="w-full system-menu"
         :pt="{
@@ -42,6 +47,7 @@
             :to="item.route"
             class="menu-item"
             :class="{ 'active': isActiveRoute(item.route) }"
+            @click="handleMenuItemClick"
           >
             <i :class="[item.icon, 'menu-icon', appStore.sidebarCollapsed ? 'mx-auto' : 'mr-3']"></i>
             <div class="menu-text" :class="{ 'collapsed': appStore.sidebarCollapsed }">
@@ -51,7 +57,7 @@
               <i v-if="item.items" class="pi pi-angle-down"></i>
             </div>
           </NuxtLink>
-          <a v-else class="menu-item">
+          <a v-else class="menu-item" @click="handleMenuItemClick">
             <i :class="[item.icon, 'menu-icon', appStore.sidebarCollapsed ? 'mx-auto' : 'mr-3']"></i>
             <div class="menu-text" :class="{ 'collapsed': appStore.sidebarCollapsed }">
               <span class="whitespace-nowrap">{{ item.label }}</span>
@@ -74,6 +80,7 @@ const appStore = useAppStore()
 const permissionStore = usePermissionStore()
 const buildingStore = useBuildingStore()
 const loading = ref(false)
+const panelMenuRef = ref()
 
 const { fetchUserPermissions, fetchMonitoringSidebar, fetchEnergySidebar, fetchSettingSidebar, getDefaultMonitoringSidebar } = useAuth()
 
@@ -195,6 +202,22 @@ const isActiveRoute = (routePath: string): boolean => {
   return route.path === routePath || route.path.startsWith(routePath + '/')
 }
 
+// 處理菜單項點擊
+const handleMenuItemClick = (event: Event) => {
+  // 如果側邊欄收合，則展開側邊欄而不是展開子菜單
+  if (appStore.sidebarCollapsed) {
+    event.preventDefault()
+    event.stopPropagation()
+    appStore.toggleSidebar()
+  }
+}
+
+// 處理側邊欄收合切換
+const handleSidebarToggle = () => {
+  // 直接切換側邊欄狀態，菜單項會自動收合
+  appStore.toggleSidebar()
+}
+
 // 監聽建築變更
 watch(() => buildingStore.selectedBuilding, async (newBuilding) => {
   if (newBuilding) await initializeData()
@@ -218,7 +241,7 @@ onMounted(() => {
 }
 
 .admin-sidebar.collapsed {
-  width: 5rem;
+  width: 3.5rem;
 }
 
 /* Header 樣式 */
@@ -227,16 +250,11 @@ onMounted(() => {
 }
 
 .header-text.collapsed {
-  width: 0;
-  opacity: 0;
+  display: none;
 }
 
 .admin-sidebar.collapsed .sidebar-header .flex.items-center.gap-3 {
   justify-content: center;
-}
-
-.toggle-btn:hover {
-  background-color: rgb(55 65 81);
 }
 
 /* 選單樣式 */
@@ -255,7 +273,10 @@ onMounted(() => {
 }
 
 .menu-text.collapsed {
-  width: 0;
-  opacity: 0;
+  display: none;
+}
+
+.menu-arrow.collapsed {
+  display: none;
 }
 </style>

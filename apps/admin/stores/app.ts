@@ -41,15 +41,26 @@ export const useAppStore = defineStore('app', {
 
     toggleTheme() {
       this.theme = this.theme === 'light' ? 'dark' : 'light'
-      // Apply theme to document
-      document.documentElement.classList.toggle('dark', this.theme === 'dark')
-      // Store preference
-      localStorage.setItem('theme', this.theme)
+      this.applyTheme(this.theme)
     },
 
     setTheme(theme: 'light' | 'dark') {
       this.theme = theme
+      this.applyTheme(theme)
+    },
+
+    applyTheme(theme: 'light' | 'dark') {
+      // Apply PrimeVue theme using official method
+      if (theme === 'dark') {
+        document.documentElement.classList.add('app-dark')
+      } else {
+        document.documentElement.classList.remove('app-dark')
+      }
+      
+      // Also apply Tailwind dark mode class for consistency
       document.documentElement.classList.toggle('dark', theme === 'dark')
+      
+      // Store preference
       localStorage.setItem('theme', theme)
     },
 
@@ -62,6 +73,13 @@ export const useAppStore = defineStore('app', {
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
         this.setTheme(prefersDark ? 'dark' : 'light')
       }
+      
+      // Listen for system theme changes
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+        if (!localStorage.getItem('theme')) {
+          this.setTheme(e.matches ? 'dark' : 'light')
+        }
+      })
     },
 
     setLoading(loading: boolean) {

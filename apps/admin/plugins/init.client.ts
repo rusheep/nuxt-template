@@ -1,10 +1,10 @@
 export default defineNuxtPlugin(async () => {
-  const authStore = useAuthStore()
+  const userAuthStore = useUserAuthStore()
   const appStore = useAppStore()
   
   // Initialize theme
   appStore.initializeTheme()
   
   // Check authentication state
-  await authStore.checkAuth()
+  await userAuthStore.checkAuth()
 })

@@ -14,12 +14,16 @@ export default defineEventHandler(async (event) => {
       // 登入相關 - 直接轉發，路徑已經正確
       'LoginV2/': 'api/LoginV2/',
       
+      // 權限相關 - function模組路徑
+      'function/get-function-list': 'api/function/get-function-list',
+      
       // 帳號管理相關 - User模組路徑
       'User/UserManagerList': 'User/UserManagerList',
       'User/RoleManagerList': 'User/RoleManagerList',
       'User/GetOneUser': 'User/GetOneUser',
       'User/SaveUser': 'User/SaveUser',
       'User/DeleteOneUser': 'User/DeleteOneUser',
+      'User/AuthPageListByVariable': 'User/AuthPageListByVariable',
       
       // 儀表板相關 - SituationRoom模組路徑
       'SituationRoom/Initialize': 'SituationRoom/Initialize',
@@ -33,6 +37,8 @@ export default defineEventHandler(async (event) => {
       'api/Device/GetFloor': 'api/Device/GetFloor',
       'api/Device/GetDeviceList': 'api/Device/GetDeviceList',
       'api/Device/GetBuild': 'api/Device/GetBuild',
+      'api/Device/GetMainSub': 'api/Device/GetMainSub',
+      'Device/GetMainSub': 'api/Device/GetMainSub',
       
       // 建築物和資產管理相關 - AssetManage模組路徑
       'AssetManage/GetBuildingList': 'AssetManage/GetBuildingList',
@@ -62,8 +68,13 @@ export default defineEventHandler(async (event) => {
       'api/energy-manager/all-site/energy-cost-rank': 'api/energy-manager/all-site/energy-cost-rank',
       
       // 歷史記錄相關 - api/History模組路徑
+      'api/History/GetDeviceInfo': 'api/History/GetDeviceInfo',
       'api/History/GetHistoryData': 'api/History/GetHistoryData',
       'api/History/GetHistoryFavorite': 'api/History/GetHistoryFavorite',
+      'History/GetDeviceInfo': 'api/History/GetDeviceInfo',
+      
+      // 側邊欄相關
+      'GetSideBar': 'api/GetSideBar',
       
       // 操作相關 - operation模組路徑
       'operation/OpeRecList': 'api/operation/GetRecord',

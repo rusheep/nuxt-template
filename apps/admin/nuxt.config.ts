@@ -44,7 +44,12 @@ export default defineNuxtConfig({
   primevue: {
     options: {
       theme: {
-        preset: Aura
+        preset: Aura,
+        options: {
+          prefix: 'p',
+          darkModeSelector: '.app-dark', // 使用 class 選擇器而不是 system
+          cssLayer: false
+        }
       }
     }
   },

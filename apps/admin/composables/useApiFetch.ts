@@ -74,9 +74,16 @@ export const useApiFetch = () => {
       
       // 添加時間戳避免快取
       if (options.method === 'GET') {
-        const url = new URL(request.toString(), config.public.apiBase)
-        url.searchParams.set('_t', Date.now().toString())
-        request = url.toString()
+        try {
+          // 確保 base URL 是有效的
+          const baseURL = config.public.apiBase || 'http://localhost:3000'
+          const url = new URL(request.toString(), baseURL)
+          url.searchParams.set('_t', Date.now().toString())
+          request = url.toString()
+        } catch (error) {
+          console.warn('無法添加時間戳參數:', error)
+          // 如果 URL 構造失敗，繼續使用原始請求
+        }
       }
     },
 

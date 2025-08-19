@@ -63,7 +63,7 @@ const hideNavigation = computed(() => {
 
 .main-content {
   grid-area: main;
-  background-color: #f8fafc;
+  background-color: var(--surface-ground);
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: rgba(0, 0, 0, 0.2) transparent;

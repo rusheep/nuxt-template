@@ -4,7 +4,7 @@
       v-model="selectedBuilding"
       :options="availableBuildings"
       optionLabel="name"
-      optionValue="id"
+      optionValue="building_guid"
       placeholder="選擇建築物"
       :loading="loading"
       class="building-dropdown"
@@ -56,46 +56,27 @@ const selectedBuilding = computed({
   set: (value) => emit('update:modelValue', value)
 })
 
-const availableBuildings = ref<Building[]>([])
-const loading = ref(false)
+const buildingStore = useBuildingStore()
+const permissionStore = usePermissionStore()
+
+const availableBuildings = computed(() => buildingStore.buildings)
+const loading = computed(() => buildingStore.loading)
 
 const loadBuildings = async () => {
-  try {
-    loading.value = true
-    const api = useApi()
-    const response = await api.post<any>('/AssetManage/GetBuildingList', {})
-    
-    if (response?.data) {
-      availableBuildings.value = response.data.map((building: any) => ({
-        id: building.building_guid,
-        name: building.building_name || building.name,
-        address: building.address || '',
-        building_guid: building.building_guid
-      }))
-    }
-  } catch (error) {
-    console.error('載入建築物列表失敗:', error)
-    availableBuildings.value = [
-      {
-        id: '16fa410f-6dde-11f0-81c7-04421a66034e',
-        name: '展示建築物',
-        address: '台北市信義區',
-        building_guid: '16fa410f-6dde-11f0-81c7-04421a66034e'
-      }
-    ]
-  } finally {
-    loading.value = false
-  }
+  await buildingStore.fetchBuildings()
 }
 
 const getBuildingName = (buildingId: string) => {
-  const building = availableBuildings.value.find(b => b.id === buildingId)
+  const building = availableBuildings.value.find(b => b.building_guid === buildingId)
   return building?.name || buildingId
 }
 
 const onBuildingChange = () => {
-  const building = availableBuildings.value.find(b => b.id === selectedBuilding.value)
+  const building = availableBuildings.value.find(b => b.building_guid === selectedBuilding.value)
   if (building) {
+    // 更新 store
+    buildingStore.setSelectedBuilding(building)
+    
     // 儲存到 localStorage 以供 API 使用
     if (process.client) {
       localStorage.setItem('CviBuilding', JSON.stringify({
@@ -109,6 +90,7 @@ const onBuildingChange = () => {
 
 onMounted(() => {
   loadBuildings()
+  buildingStore.initializeBuilding()
   
   // 從 localStorage 載入之前選擇的建築物
   if (process.client) {
@@ -117,6 +99,12 @@ onMounted(() => {
       if (storedBuilding) {
         const buildingData = JSON.parse(storedBuilding)
         selectedBuilding.value = buildingData.building_guid
+        
+        // 同步到 store
+        const building = availableBuildings.value.find(b => b.building_guid === buildingData.building_guid)
+        if (building) {
+          buildingStore.setSelectedBuilding(building)
+        }
       }
     } catch (error) {
       console.error('載入儲存的建築物失敗:', error)

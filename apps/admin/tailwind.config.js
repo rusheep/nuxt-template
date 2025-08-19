@@ -8,6 +8,7 @@ export default {
     './app.vue',
     './error.vue'
   ],
+  darkMode: 'class', // 啟用 class 模式的深色模式
   theme: {
     extend: {
       colors: {

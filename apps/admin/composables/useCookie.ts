@@ -85,7 +85,7 @@ export const useCookieManager = () => {
    */
   const setAuthToken = (token: string) => {
     setCookie('JWT-Authorization', token, {
-      maxAge: 24 * 60 * 60 * 1000, // 24 小時（毫秒）
+      maxAge: 24 * 60 * 60, // 24 小時（秒）
     })
   }
 
@@ -101,7 +101,7 @@ export const useCookieManager = () => {
    */
   const setUserName = (userName: string) => {
     setCookie('user_name', userName, {
-      maxAge: 24 * 60 * 60 * 1000, // 24 小時（毫秒）
+      maxAge: 24 * 60 * 60, // 24 小時（秒）
     })
   }
 

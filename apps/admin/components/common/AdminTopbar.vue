@@ -82,10 +82,20 @@ import BuildingSelector from './BuildingSelector.vue'
 
 const route = useRoute()
 const appStore = useAppStore()
+const buildingStore = useBuildingStore()
+const permissionStore = usePermissionStore()
 const userMenu = ref()
 
 // Building selection
-const selectedBuilding = ref('')
+const selectedBuilding = computed({
+  get: () => buildingStore.selectedBuilding?.building_guid || '',
+  set: (value) => {
+    const building = buildingStore.buildings.find(b => b.building_guid === value)
+    if (building) {
+      buildingStore.setSelectedBuilding(building)
+    }
+  }
+})
 
 // Get current user from store (to be implemented)
 const user = ref({
@@ -159,9 +169,7 @@ const toggleNotifications = () => {
   console.log('Toggle notifications')
 }
 
-const toggleTheme = () => {
-  appStore.toggleTheme()
-}
+const { toggleTheme } = useTheme()
 
 const toggleUserMenu = (event: Event) => {
   userMenu.value.toggle(event)
@@ -173,9 +181,27 @@ function logout() {
   navigateTo('/login')
 }
 
-const onBuildingChange = (building: any) => {
+const onBuildingChange = async (building: any) => {
   console.log('建築物變更:', building)
-  // 這裡可以觸發全域事件或更新 store
+  
+  // 重新載入用戶權限和側邊欄數據
+  if (building) {
+    try {
+      const { fetchUserPermissions, fetchMonitoringSidebar } = useAuth()
+      
+      // 重新獲取權限
+      await fetchUserPermissions(building.building_guid)
+      
+      // 如果有監控系統權限，重新獲取側邊欄
+      if (permissionStore.hasPermission('PF1')) {
+        await fetchMonitoringSidebar(building.building_guid)
+      }
+      
+      console.log('權限和側邊欄數據已更新')
+    } catch (error) {
+      console.error('建築變更後重新載入數據失敗:', error)
+    }
+  }
 }
 </script>
 

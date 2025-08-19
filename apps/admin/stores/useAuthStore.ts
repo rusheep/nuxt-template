@@ -33,6 +33,8 @@ export const useAuthStore = () => useUserAuthStore()
 export const usePermissionStore = defineStore('permission', () => {
   const authPages = ref<AuthPage[]>([])
   const sidebarData = ref<MainSystem[]>([])
+  const energySidebarData = ref<any[]>([])
+  const settingSidebarData = ref<any[]>([])
   const loading = ref(false)
 
   // 更新用戶權限頁面
@@ -43,6 +45,16 @@ export const usePermissionStore = defineStore('permission', () => {
   // 更新側邊欄數據
   const updateSidebarData = (data: MainSystem[]) => {
     sidebarData.value = data
+  }
+
+  // 更新能源管理側邊欄數據
+  const updateEnergySidebarData = (data: any[]) => {
+    energySidebarData.value = data
+  }
+
+  // 更新設定管理側邊欄數據
+  const updateSettingSidebarData = (data: any[]) => {
+    settingSidebarData.value = data
   }
 
   // 獲取有權限的頁面
@@ -70,15 +82,21 @@ export const usePermissionStore = defineStore('permission', () => {
   const clearAuth = () => {
     authPages.value = []
     sidebarData.value = []
+    energySidebarData.value = []
+    settingSidebarData.value = []
   }
 
   return {
     authPages: readonly(authPages),
     sidebarData: readonly(sidebarData),
+    energySidebarData: readonly(energySidebarData),
+    settingSidebarData: readonly(settingSidebarData),
     loading: readonly(loading),
     getAuthorizedPages,
     updateAuthPages,
     updateSidebarData,
+    updateEnergySidebarData,
+    updateSettingSidebarData,
     getPageByAuthCode,
     hasPermission,
     setLoading,

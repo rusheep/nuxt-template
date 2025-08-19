@@ -84,6 +84,7 @@ export const useAuth = () => {
       })
 
       if (response.data) {
+        permissionStore.updateEnergySidebarData(response.data)
         return response.data
       }
       
@@ -91,6 +92,26 @@ export const useAuth = () => {
     } catch (error) {
       console.error('獲取能源管理側邊欄失敗:', error)
       throw new Error('無法取得能源管理選單，請檢查網路連線或聯繫系統管理員')
+    }
+  }
+
+  // 獲取設定管理側邊欄
+  const fetchSettingSidebar = async () => {
+    try {
+      const response = await apiFetch(API_ENDPOINTS.GET_SIDEBAR, {
+        method: 'POST',
+        body: { system_type: 'Setting' }
+      })
+
+      if (response.data) {
+        permissionStore.updateSettingSidebarData(response.data)
+        return response.data
+      }
+      
+      throw new Error('API 回應格式不正確')
+    } catch (error) {
+      console.error('獲取設定管理側邊欄失敗:', error)
+      throw new Error('無法取得設定管理選單，請檢查網路連線或聯繫系統管理員')
     }
   }
 
@@ -162,6 +183,7 @@ export const useAuth = () => {
     fetchUserPermissions,
     fetchMonitoringSidebar,
     fetchEnergySidebar,
+    fetchSettingSidebar,
     fetchHistorySidebar,
     getDefaultMonitoringSidebar
   }

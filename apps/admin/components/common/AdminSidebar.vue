@@ -1,15 +1,12 @@
 <template>
   <aside class="admin-sidebar" :class="{ 'collapsed': appStore.sidebarCollapsed }">
+    <!-- Header -->
     <div class="sidebar-header">
       <div class="flex items-center justify-between p-4">
         <div class="flex items-center gap-3">
           <div class="header-text" :class="{ 'collapsed': appStore.sidebarCollapsed }">
-            <div class="text-lg font-bold whitespace-nowrap">
-              IBMS NetZero
-            </div>
-            <div class="text-sm opacity-80 whitespace-nowrap">
-              智慧建築管理系統
-            </div>
+            <div class="text-lg font-bold whitespace-nowrap">IBMS NetZero</div>
+            <div class="text-sm opacity-80 whitespace-nowrap">智慧建築管理系統</div>
           </div>
         </div>
         <Button
@@ -20,13 +17,12 @@
       </div>
     </div>
     
+    <!-- Menu -->
     <div class="sidebar-menu">
-      <!-- 載入指示器 -->
       <div v-if="loading" class="flex items-center justify-center p-4">
         <ProgressSpinner size="2rem" />
       </div>
       
-      <!-- 動態選單 -->
       <PanelMenu 
         v-else
         :model="systemMenuItems" 
@@ -55,10 +51,7 @@
               <i v-if="item.items" class="pi pi-angle-down"></i>
             </div>
           </NuxtLink>
-          <a
-            v-else
-            class="menu-item"
-          >
+          <a v-else class="menu-item">
             <i :class="[item.icon, 'menu-icon', appStore.sidebarCollapsed ? 'mx-auto' : 'mr-3']"></i>
             <div class="menu-text" :class="{ 'collapsed': appStore.sidebarCollapsed }">
               <span class="whitespace-nowrap">{{ item.label }}</span>
@@ -80,243 +73,116 @@ const route = useRoute()
 const appStore = useAppStore()
 const permissionStore = usePermissionStore()
 const buildingStore = useBuildingStore()
-
-// 響應式數據
 const loading = ref(false)
 
-// 初始化權限和側邊欄數據
-const { fetchUserPermissions, fetchMonitoringSidebar, getDefaultMonitoringSidebar } = useAuth()
+const { fetchUserPermissions, fetchMonitoringSidebar, fetchEnergySidebar, fetchSettingSidebar, getDefaultMonitoringSidebar } = useAuth()
+
+// 頁面標籤映射
+const PAGE_LABELS: Record<string, string> = {
+  'PF3': 'History Data',
+  'PF4': 'Alert', 
+  'PF5': 'Maintenance',
+  'PF6': 'Graph',
+  'PF7': 'Devices',
+  'PF8': 'Account'
+}
 
 // 動態系統選單項目
 const systemMenuItems = computed<MenuItem[]>(() => {
   const authorizedPages = permissionStore.getAuthorizedPages
-  
   const menuItems: MenuItem[] = []
   
   authorizedPages.forEach((page: any) => {
-    // 確保頁面有效且有權限，且排除首頁
-    if (!page.authCode || !page.showView || page.authCode === 'PF0') {
-      return
-    }
+    if (!page.authCode || !page.showView || page.authCode === 'PF0') return
     
-    if (page.authCode === 'PF1') {
-      // 監控系統 - 使用動態子系統數據
-      menuItems.push({
-        key: 'monitoring',
-        label: 'Monitoring System',
-        icon: 'pi pi-desktop',
-        expanded: true,
-        items: buildMonitoringSubItems()
-      } as MenuItem)
-    } else if (page.authCode === 'PF2') {
-      // 能源管理 - 使用動態結構
-      menuItems.push({
-        key: 'energy-management',
-        label: 'Energy Management',
-        icon: 'pi pi-chart-line',
-        items: buildEnergySubItems()
-      } as MenuItem)
-    } else if (page.authCode === 'PF9') {
-      // 設定管理 - 添加子選單
-      menuItems.push({
-        key: 'setting',
-        label: 'Setting',
-        icon: 'pi pi-cog',
-        items: buildSettingSubItems()
-      } as MenuItem)
+    if (SYSTEM_CONFIGS[page.authCode]) {
+      menuItems.push(createSystemItem(page.authCode))
     } else {
-      // 其他單頁面項目 - 確保有必要的屬性
-      const label = getPageLabel(page)
-      const icon = page.icon
-      const route = page.route
-      
-      // 只有當標籤、圖標和路由都存在時才添加
-      if (label && icon && route) {
-        menuItems.push({
-          key: page.authCode,
-          label: label,
-          icon: icon,
-          route: route
-        } as MenuItem)
-      }
+      const singleItem = createSinglePageItem(page)
+      if (singleItem) menuItems.push(singleItem)
     }
   })
   
   return menuItems
 })
 
-// 建構監控系統子項目
-const buildMonitoringSubItems = (): MenuItem[] => {
-  const sidebarData = permissionStore.sidebarData.length > 0 
-    ? permissionStore.sidebarData 
-    : getDefaultMonitoringSidebar()
-    
-  return sidebarData.map((mainSystem: any) => ({
-    key: mainSystem.main_system_tag.toLowerCase(),
-    label: mainSystem.full_name,
-    items: (mainSystem.sub_systems || []).map((subSystem: any) => ({
-      key: subSystem.sub_system_tag,
-      label: subSystem.full_name,
-      route: subSystem.route || buildRoute('monitoring', mainSystem.main_system_tag, subSystem.sub_system_tag)
-    } as MenuItem))
-  } as MenuItem))
+// 系統項目配置
+const SYSTEM_CONFIGS = {
+  'PF1': { key: 'monitoring', label: 'Monitoring System', icon: 'pi pi-desktop', expanded: true, type: 'monitoring', data: () => permissionStore.sidebarData, defaultData: () => getDefaultMonitoringSidebar() },
+  'PF2': { key: 'energy-management', label: 'Energy Management', icon: 'pi pi-chart-line', type: 'energy', data: () => permissionStore.energySidebarData },
+  'PF9': { key: 'setting', label: 'Setting', icon: 'pi pi-cog', type: 'setting', data: () => permissionStore.settingSidebarData }
 }
 
-// 建構能源管理子項目
-const buildEnergySubItems = (): MenuItem[] => {
-  return [
-    {
-      key: 'energy-analysis',
-      label: 'Energy Analysis',
-      items: [
-        {
-          key: 'chart-analysis',
-          label: 'Chart Analysis',
-          route: '/energy/analysis/chart-analysis'
-        },
-        {
-          key: 'historical-curve',
-          label: 'Historical Curve',
-          route: '/energy/analysis/historical-curve'
-        },
-        {
-          key: 'quick-metering',
-          label: 'Quick Metering',
-          route: '/energy/analysis/quick-metering'
-        },
-        {
-          key: 'electricity-classification',
-          label: 'Electricity Classification',
-          route: '/energy/analysis/electricity-classification'
-        }
-      ]
-    },
-    {
-      key: 'consumption-analysis',
-      label: 'Consumption Analysis',
-      items: [
-        {
-          key: 'daily-report',
-          label: 'Daily Report',
-          route: '/energy/consumption/daily-report'
-        },
-        {
-          key: 'weekly-report',
-          label: 'Weekly Report',
-          route: '/energy/consumption/weekly-report'
-        },
-        {
-          key: 'monthly-report',
-          label: 'Monthly Report',
-          route: '/energy/consumption/monthly-report'
-        },
-        {
-          key: 'annual-report',
-          label: 'Annual Report',
-          route: '/energy/consumption/annual-report'
-        }
-      ]
-    }
-  ] as MenuItem[]
-}
-
-// 建構設定管理子項目
-const buildSettingSubItems = (): MenuItem[] => {
-  return [
-    {
-      key: 'setting-config',
-      label: 'Setting Configuration',
-      items: [
-        {
-          key: 'department',
-          label: 'Department',
-          route: '/setting/config/department'
-        },
-        {
-          key: 'electricity-classification',
-          label: 'Electricity Classification',
-          route: '/setting/config/electricity-classification'
-        },
-        {
-          key: '2d-3d-settings',
-          label: '2D/3D Settings',
-          route: '/setting/config/2d-3d-settings'
-        },
-        {
-          key: 'maintenance-vendor',
-          label: 'Maintenance Vendor',
-          route: '/setting/config/maintenance-vendor'
-        },
-        {
-          key: 'building',
-          label: 'Building',
-          route: '/setting/config/building'
-        },
-        {
-          key: 'demand',
-          label: 'Demand',
-          route: '/setting/config/demand'
-        },
-        {
-          key: 'floor',
-          label: 'Floor',
-          route: '/setting/config/floor'
-        },
-        {
-          key: 'time-based-pricing',
-          label: 'Time Based Pricing',
-          route: '/setting/config/time-based-pricing'
-        }
-      ]
-    },
-    {
-      key: 'device-management',
-      label: 'Device Management',
-      items: [
-        {
-          key: 'mqtt-result',
-          label: 'MQTT Result',
-          route: '/setting/device/mqtt-result'
-        }
-      ]
-    }
-  ] as MenuItem[]
-}
-
-// 獲取頁面標籤
-const getPageLabel = (page: any) => {
-  const labelMap: Record<string, string> = {
-    'PF0': 'Dashboard',
-    'PF3': 'History Data',
-    'PF4': 'Alert',
-    'PF5': 'Maintenance',
-    'PF6': 'Graph',
-    'PF7': 'Devices',
-    'PF8': 'Account',
-    'PF9': 'Setting'
+// 通用創建系統項目
+const createSystemItem = (authCode: string): MenuItem => {
+  const config = SYSTEM_CONFIGS[authCode]
+  return {
+    key: config.key,
+    label: config.label,
+    icon: config.icon,
+    ...(config.expanded && { expanded: config.expanded }),
+    items: buildSubItems(config.type, config.data(), config.defaultData?.())
   }
-  return labelMap[page.authCode] || page.resource || page.label || null
 }
 
-// 建構路由路徑
-const buildRoute = (type: string, mainSystem: string, subSystem: string) => {
-  // 轉換為 kebab-case 並清理特殊字符
-  const cleanMainSystem = mainSystem.toLowerCase().replace(/\s+/g, '-')
-  const cleanSubSystem = subSystem.toLowerCase().replace(/\s+/g, '-')
-  return `/${type}/${cleanMainSystem}/${cleanSubSystem}`
+// 創建單頁面項目
+const createSinglePageItem = (page: any): MenuItem | null => {
+  const label = PAGE_LABELS[page.authCode] || page.resource || page.label
+  if (!label || !page.icon || !page.route) return null
+  
+  return {
+    key: page.authCode,
+    label,
+    icon: page.icon,
+    route: page.route
+  }
+}
+
+// 通用建構子項目函數
+const buildSubItems = (type: string, data: any[], defaultData?: any[]): MenuItem[] => {
+  const sidebarData = data.length > 0 ? data : (defaultData || [])
+  
+  if (sidebarData.length === 0) {
+    return []
+  }
+  
+  return sidebarData.map((mainSystem: any) => ({
+    key: (mainSystem.main_system_tag?.toLowerCase() || mainSystem.key),
+    label: (mainSystem.full_name || mainSystem.label),
+    items: (mainSystem.sub_systems || mainSystem.sub || mainSystem.items || []).map((subSystem: any) => ({
+      key: (subSystem.sub_system_tag || subSystem.key),
+      label: (subSystem.full_name || subSystem.label),
+      route: subSystem.route || buildRoute(type, mainSystem.main_system_tag, subSystem.sub_system_tag, subSystem.full_name)
+    }))
+  }))
+}
+
+// 建構路由路徑 - 純 API 驅動
+const buildRoute = (type: string, mainSystemTag: string, subSystemTag: string, fullName: string): string => {
+  const cleanType = type.toLowerCase()
+  const cleanMainSystem = mainSystemTag.toLowerCase().replace(/_/g, '-')
+  const cleanFullName = fullName.toLowerCase()
+    .replace(/_/g, '-')             // _ 轉 -
+    .replace(/\s+/g, '-')           // 空格轉 -
+    .replace(/\//g, '-')            // / 轉 -  
+    .replace(/&/g, 'and')           // & 轉 and
+    .replace(/[^\w-]/g, '')         // 移除特殊字符
+
+  const result = `/${cleanType}/${cleanMainSystem}/${cleanFullName}`
+  console.log(`buildRoute: ${fullName} -> ${result}`)
+  return result
 }
 
 // 初始化數據
 const initializeData = async () => {
   loading.value = true
   try {
-    // 獲取用戶權限
     await fetchUserPermissions()
-    
-    // 如果有監控系統權限，獲取對應的側邊欄數據
-    if (permissionStore.hasPermission('PF1')) {
-      await fetchMonitoringSidebar()
-    }
+    await Promise.allSettled([
+      fetchMonitoringSidebar(),
+      fetchEnergySidebar(), 
+      fetchSettingSidebar()
+    ])
   } catch (error) {
     console.error('Failed to initialize sidebar data:', error)
   } finally {
@@ -324,16 +190,15 @@ const initializeData = async () => {
   }
 }
 
-// 監聽建築變更
-watch(() => buildingStore.selectedBuilding, async (newBuilding) => {
-  if (newBuilding) {
-    await initializeData()
-  }
-}, { immediate: true })
-
-const isActiveRoute = (routePath: string) => {
+// 檢查路由是否活躍
+const isActiveRoute = (routePath: string): boolean => {
   return route.path === routePath || route.path.startsWith(routePath + '/')
 }
+
+// 監聽建築變更
+watch(() => buildingStore.selectedBuilding, async (newBuilding) => {
+  if (newBuilding) await initializeData()
+}, { immediate: true })
 
 // 生命週期
 onMounted(() => {
@@ -393,5 +258,4 @@ onMounted(() => {
   width: 0;
   opacity: 0;
 }
-
 </style>
